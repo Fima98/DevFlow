@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import React from "react";
 
 import { SheetClose } from "@/components/ui/sheet";
-import { sidebarLinks } from "@/constants/sideBarLinks";
+import { sidebarLinks } from "@/constants";
 import { cn } from "@/lib/utils";
 
 const NavLinks = ({ isMobileNav = false }: { isMobileNav?: boolean }) => {
