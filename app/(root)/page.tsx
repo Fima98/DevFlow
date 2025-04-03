@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import QuestionCard from "@/components/cards/QuestionCard";
 import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
@@ -9,44 +10,44 @@ const questions = [
   {
     _id: "1",
     title: "How to create a custom hook in React?",
-    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+
     tags: [
       { _id: "1", name: "react" },
       { _id: "2", name: "javascript" },
     ],
-    author: { _id: "1", name: "John Doe" },
+    author: { _id: "1", name: "John Doe", image: "/profile-pic.jpeg" },
     upvotes: 10,
     answers: 5,
     views: 100,
-    createdAt: "2023-01-01",
+    createdAt: new Date("2023-01-01"),
   },
   {
     _id: "2",
     title: "What is the difference between props and state in React?",
-    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+
     tags: [
       { _id: "1", name: "react" },
       { _id: "2", name: "javascript" },
     ],
-    author: { _id: "1", name: "John Doe" },
+    author: { _id: "1", name: "John Doe", image: "/profile-pic.jpeg" },
     upvotes: 10,
     answers: 5,
     views: 100,
-    createdAt: "2023-01-01",
+    createdAt: new Date("2023-01-01"),
   },
   {
     _id: "3",
     title: "How to handle form validation in React?",
-    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+
     tags: [
       { _id: "1", name: "react" },
       { _id: "2", name: "javascript" },
     ],
-    author: { _id: "1", name: "John Doe" },
+    author: { _id: "1", name: "John Doe", image: "/profile-pic.jpeg" },
     upvotes: 10,
     answers: 5,
     views: 100,
-    createdAt: "2023-01-01",
+    createdAt: new Date("2023-01-01"),
   },
 ];
 
@@ -89,7 +90,7 @@ const Home = async ({ searchParams }: SearchParams) => {
       <HomeFilter />
       <div className="mt-10 flex w-full flex-col gap-6">
         {filteredQuestions.map((question) => (
-          <h1 key={question._id}>{question.title}</h1>
+          <QuestionCard key={question._id} question={question} />
         ))}
       </div>
     </>
