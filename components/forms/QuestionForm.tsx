@@ -1,6 +1,8 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import { MDXEditorMethods } from "@mdxeditor/editor";
+import dynamic from "next/dynamic";
+import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 
 import {
@@ -17,7 +19,12 @@ import { AskQuestionSchema } from "@/lib/validations";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
+const Editor = dynamic(() => import("@/components/editor"), {
+  ssr: false,
+});
+
 const QuestionForm = () => {
+  const editorRef = useRef<MDXEditorMethods>(null);
   const form = useForm({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
@@ -60,13 +67,19 @@ const QuestionForm = () => {
         <FormField
           control={form.control}
           name="content"
-          render={() => (
+          render={({ field }) => (
             <FormItem className="flex w-full flex-col">
               <FormLabel className="paragraph-semibold text-dark400_light800">
                 Detailed explanation of your problem{" "}
                 <span className="text-primary-500">*</span>
               </FormLabel>
-              <FormControl>EDITOR</FormControl>
+              <FormControl>
+                <Editor
+                  value={field.value}
+                  editorRef={editorRef}
+                  fieldChange={field.onChange}
+                />
+              </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
                 Inroduce the probloem and expant on what you&apos;ve put in the
                 title.
