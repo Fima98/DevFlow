@@ -33,7 +33,7 @@ import { useTheme } from "next-themes";
 import { Ref } from "react";
 
 import "@mdxeditor/editor/style.css";
-import "./dark-editor.css";
+import "./editor.css";
 
 interface Props {
   value: string;
@@ -52,7 +52,7 @@ const Editor = ({ value, editorRef, fieldChange }: Props) => {
       markdown={value}
       ref={editorRef}
       onChange={fieldChange}
-      className="background-light800_dark200 light-border-2 markdown-editor dark-editor grid w-full overflow-hidden rounded-lg border"
+      className="background-light800_dark200 light-border-2 markdown-editor dark-editor light-editor grid w-full overflow-hidden rounded-lg border"
       plugins={[
         headingsPlugin(),
         listsPlugin(),
