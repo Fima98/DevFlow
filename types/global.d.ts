@@ -1,4 +1,4 @@
-export interface Question {
+interface Question {
   _id: string;
   title: string;
   tags: Tag[];
@@ -9,12 +9,12 @@ export interface Question {
   views: number;
 }
 
-export interface Tag {
+interface Tag {
   _id: string;
   name: string;
 }
 
-export interface Author {
+interface Author {
   _id: string;
   name: string;
   image: string;

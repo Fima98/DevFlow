@@ -3,8 +3,6 @@ import React from "react";
 
 import ROUTES from "@/constants/routes";
 import { getTimeStamp } from "@/lib/utils";
-import { Question } from "@/types/global";
-import { Tag } from "@/types/global";
 
 import TagCard from "./TagCard";
 import Metric from "../Metric";
