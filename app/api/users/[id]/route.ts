@@ -49,12 +49,15 @@ export async function PUT(
     const body = await request.json();
     const validatedData = UserSchema.partial().parse(body);
 
-    const user = await User.findByIdAndUpdate(id, validatedData, {
+    const updatedUser = await User.findByIdAndUpdate(id, validatedData, {
       new: true,
       runValidators: true,
     });
-    if (!user) throw new NotFoundError("User");
-    return NextResponse.json({ success: true, data: user }, { status: 200 });
+    if (!updatedUser) throw new NotFoundError("User");
+    return NextResponse.json(
+      { success: true, data: updatedUser },
+      { status: 200 }
+    );
   } catch (error) {
     return handleError(error, "api") as APIErrorResponse;
   }
