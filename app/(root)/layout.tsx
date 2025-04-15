@@ -7,7 +7,7 @@ import RightSidebar from "@/components/navigation/RightSidebar";
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
   const session = await auth();
-  console.log(session);
+  console.log("Session:", session);
   return (
     <main className="background-light850_dark100 relative">
       <Navbar />
