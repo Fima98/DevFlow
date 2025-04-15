@@ -47,8 +47,6 @@ const AuthForm = <T extends FieldValues>({
 
   const buttonText = formType === "SIGN_IN" ? "Sign In" : "Sign Up";
 
-  console.log(form);
-
   return (
     <Form {...form}>
       <form
