@@ -1,8 +1,9 @@
+import { LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-// import { signOut } from "next-auth/react";
 import React from "react";
 
+import { signOut } from "@/auth";
 import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import ROUTES from "@/constants/routes";
@@ -10,19 +11,33 @@ import ROUTES from "@/constants/routes";
 import NavLinks from "./navbar/NavLinks";
 
 const LeftSidebar = async () => {
-  // const handleLogout = async () => {
-  //   await signOut({ callbackUrl: ROUTES.SIGN_IN });
-  // };
-
   const session = await auth();
+  const userId = session?.user?.id;
 
   return (
     <section className="custom-scrollbar background-light900_dark200 light-border sticky left-0 top-0 flex h-screen w-fit flex-col justify-between overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-sm:hidden lg:w-[266px]">
       <div className="flex flex-1 flex-col gap-6">
-        <NavLinks />
+        <NavLinks userId={userId} />
       </div>
       <div className="flex flex-col gap-3">
-        {!session ? (
+        {userId ? (
+          <form
+            action={async () => {
+              "use server";
+              await signOut();
+            }}
+          >
+            <Button
+              type="submit"
+              className="base-medium w-fit !bg-transparent px-4 py-3"
+            >
+              <LogOut className="size-5 text-black dark:text-white" />
+              <span className="text-dark300_light900 max-lg:hidden">
+                Log Out
+              </span>
+            </Button>
+          </form>
+        ) : (
           <>
             <Button
               asChild
@@ -57,13 +72,6 @@ const LeftSidebar = async () => {
               </Link>
             </Button>
           </>
-        ) : (
-          <Button
-            // onClick={handleLogout}
-            className="small-medium btn-secondary inline-flex h-9 min-h-[41px] w-full items-center justify-center rounded-lg bg-slate-900 px-4 py-3 text-sm font-medium text-slate-50 shadow-none transition-colors hover:bg-slate-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 dark:focus-visible:ring-slate-300"
-          >
-            <span className="primary-text-gradient max-lg:hidden">Log Out</span>
-          </Button>
         )}
       </div>
     </section>
