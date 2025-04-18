@@ -1,13 +1,10 @@
 import React, { ReactNode } from "react";
 
-import { auth } from "@/auth";
 import LeftSidebar from "@/components/navigation/LeftSidebar";
 import Navbar from "@/components/navigation/navbar";
 import RightSidebar from "@/components/navigation/RightSidebar";
 
 const RootLayout = async ({ children }: { children: ReactNode }) => {
-  const session = await auth();
-  console.log("Session:", session);
   return (
     <main className="background-light850_dark100 relative">
       <Navbar />
