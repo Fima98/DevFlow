@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+// AUTHENTICATION SCHEMAS
 export const SignInSchema = z.object({
   email: z
     .string()
@@ -70,6 +71,7 @@ export const SignUpSchema = z.object({
     }),
 });
 
+// QUESTION SCHEMAS
 export const AskQuestionSchema = z.object({
   title: z
     .string()
@@ -89,6 +91,15 @@ export const AskQuestionSchema = z.object({
     .max(5, { message: "You can add a maximum of 5 tags." }),
 });
 
+export const EditQuestionSchema = AskQuestionSchema.extend({
+  questionId: z.string().min(1, { message: "Question ID is required." }),
+});
+
+export const GetQuestionSchema = z.object({
+  questionId: z.string().min(1, { message: "Question ID is required." }),
+});
+
+// USER SCHEMAS
 export const UserSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
   username: z
