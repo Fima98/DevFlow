@@ -27,6 +27,14 @@ export const techMap: { [key: string]: string } = {
   deno: "devicon-denojs-original",
   denojs: "devicon-denojs-plain",
 
+  // Express.js variations
+  express: "devicon-express-original",
+  expressjs: "devicon-express-original",
+
+  // Fastify.js variations
+  fastify: "devicon-fastify-plain",
+  fastifyjs: "devicon-fastify-plain",
+
   // Python
   python: "devicon-python-plain",
 
@@ -158,6 +166,12 @@ export const techMap: { [key: string]: string } = {
 
   // Django
   django: "devicon-django-plain",
+
+  // FastAPI
+  fastapi: "devicon-fastapi-plain",
+
+  // PyTest
+  pytest: "devicon-pytest-plain",
 
   // Bootstrap
   bootstrap: "devicon-bootstrap-plain",
