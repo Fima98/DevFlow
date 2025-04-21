@@ -140,3 +140,12 @@ export const AccountSchema = z.object({
     .string()
     .min(1, { message: "Provider Account ID is required." }),
 });
+
+// SEARCH SCHEMAS
+export const PaginatedSearchSchema = z.object({
+  page: z.number().int().positive().default(1),
+  pageSize: z.number().int().positive().default(10),
+  query: z.string().optional(),
+  filter: z.string().optional(),
+  sort: z.string().optional(),
+});
