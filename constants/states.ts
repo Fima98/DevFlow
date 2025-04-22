@@ -33,7 +33,7 @@ export const EMPTY_TAGS = {
   title: "No Tags Found",
   message: "The tag cloud is empty. Add some keywords to make it rain.",
   button: {
-    text: "Create Tag",
+    text: "Try Again",
     href: ROUTES.TAGS,
   },
 };
