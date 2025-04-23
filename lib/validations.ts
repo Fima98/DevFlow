@@ -149,3 +149,7 @@ export const PaginatedSearchSchema = z.object({
   filter: z.string().optional(),
   sort: z.string().optional(),
 });
+
+export const GetTagQuestionsSchema = PaginatedSearchSchema.extend({
+  tagId: z.string().min(1, { message: "Tag ID is required." }),
+});
