@@ -6,6 +6,7 @@ import React from "react";
 
 import ROUTES from "@/constants/routes";
 import { toast } from "@/hooks/use-toast";
+import logger from "@/lib/logger";
 
 import { Button } from "../ui/button";
 
@@ -20,7 +21,7 @@ const SocialAuthForm = () => {
         redirect: false,
       });
     } catch (error) {
-      console.log(error);
+      logger.error("Sign-in error", error);
 
       toast({
         title: "Sign-in Failed",

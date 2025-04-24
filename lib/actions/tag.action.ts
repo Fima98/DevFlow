@@ -99,7 +99,7 @@ export async function getTagQuestions(
     const questions = await Question.find(filterQuery)
       .select("_id title views answers upvotes downvotes author createdAt")
       .populate([
-        { path: "author", select: "name avatar" },
+        { path: "author", select: "name image" },
         { path: "tags", select: "name" },
       ])
       .lean()

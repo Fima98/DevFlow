@@ -31,8 +31,6 @@ const TagCard = ({
   const iconClass = getDeviconClassName(name);
   const iconDescription = getTechDescription(name);
 
-  console.log("TAG DESCRIPTION:", iconDescription);
-
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
   };
