@@ -16,7 +16,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
 
   if (!success || !question) return redirect("/404");
 
-  const { title, author, createdAt, answers, views, tags, content } = question!;
+  const { title, author, createdAt, answers, views, tags, content } = question;
 
   return (
     <>

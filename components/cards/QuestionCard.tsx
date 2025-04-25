@@ -6,6 +6,7 @@ import { getTimeStamp } from "@/lib/utils";
 
 import TagCard from "./TagCard";
 import Metric from "../Metric";
+import UserAvatar from "../UserAvatar";
 
 interface Props {
   question: Question;
@@ -37,15 +38,34 @@ const QuestionCard = ({
         </div>
 
         <div className="flex-between mt-6 w-full flex-wrap gap-3">
-          <Metric
-            imgUrl={author.image}
-            alt={author.name}
-            value={author.name}
-            title={`• asked ${getTimeStamp(createdAt)} `}
-            href={ROUTES.PROFILE(author._id)}
-            textStyles="body-medium text-dark400_light700"
-            titleStyles="max-sm:hidden"
-          />
+          {author.image ? (
+            <Metric
+              imgUrl={author.image}
+              alt={author.name}
+              value={author.name}
+              title={`• asked ${getTimeStamp(createdAt)} `}
+              href={ROUTES.PROFILE(author._id)}
+              textStyles="body-medium text-dark400_light700"
+              titleStyles="max-sm:hidden"
+            />
+          ) : (
+            <div className="flex-center gap-1">
+              <UserAvatar
+                id={author._id}
+                name={author.name}
+                className="size-[20px]"
+                fallbackClassName="text-[10px]"
+              />
+              <Link href={ROUTES.PROFILE(author._id)}>
+                <p className="body-medium text-dark400_light700 flex-center gap-1">
+                  {author.name}
+                  <span className="small-regular line-clamp-1 max-sm:hidden">
+                    • asked {getTimeStamp(createdAt)}
+                  </span>
+                </p>
+              </Link>
+            </div>
+          )}
 
           <div className="flex items-center gap-3 max-sm:flex-wrap max-sm:justify-start">
             <Metric
