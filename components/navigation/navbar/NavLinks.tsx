@@ -39,13 +39,14 @@ const NavLinks = ({
               "flex items-center justify-start gap-4 bg-transparent p-4"
             )}
           >
-            <Image
-              src={item.imgURL}
-              alt={item.label}
-              width={20}
-              height={20}
-              className={cn({ "invert-colors": !isActive })}
-            />
+            <div className="relative size-5">
+              <Image
+                src={item.imgURL}
+                alt={item.label}
+                fill
+                className={cn("object-contain", { "invert-colors": !isActive })}
+              />
+            </div>
             <p
               className={cn(
                 isActive ? "base-bold" : "base-medium",

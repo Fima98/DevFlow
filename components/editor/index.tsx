@@ -3,6 +3,7 @@
 import {
   MDXEditor,
   UndoRedo,
+  BlockTypeSelect,
   BoldItalicUnderlineToggles,
   toolbarPlugin,
   CodeToggle,
@@ -27,6 +28,7 @@ import {
   InsertThematicBreak,
   diffSourcePlugin,
   MDXEditorMethods,
+  thematicBreakPlugin,
 } from "@mdxeditor/editor";
 import { basicDark } from "cm6-theme-basic-dark";
 import { useTheme } from "next-themes";
@@ -62,6 +64,7 @@ const Editor = ({ value, editorRef, fieldChange }: Props) => {
         markdownShortcutPlugin(),
         tablePlugin(),
         imagePlugin(),
+        thematicBreakPlugin(),
         codeBlockPlugin({ defaultCodeBlockLanguage: "" }),
         codeMirrorPlugin({
           codeBlockLanguages: {
@@ -76,8 +79,8 @@ const Editor = ({ value, editorRef, fieldChange }: Props) => {
             js: "javascript",
             ts: "typescript",
             "": "unspecified",
-            tsx: "TypeScript (React)",
-            jsx: "JavaScript (React)",
+            tsx: "TSX",
+            jsx: "JSX",
           },
           autoLoadLanguageSupport: true,
           codeMirrorExtensions: themeExtension,
@@ -97,11 +100,12 @@ const Editor = ({ value, editorRef, fieldChange }: Props) => {
                       <UndoRedo />
                       <Separator />
 
+                      <BlockTypeSelect />
                       <BoldItalicUnderlineToggles />
                       <CodeToggle />
                       <Separator />
 
-                      <ListsToggle />
+                      <ListsToggle options={["bullet", "number"]} />
                       <Separator />
 
                       <CreateLink />

@@ -200,7 +200,12 @@ export async function getQuestion(
 
   try {
     await dbConnect();
-    const question = await Question.findById(questionId).populate("tags");
+    const question = await Question.findById(questionId)
+      .populate("tags")
+      .populate({
+        path: "author",
+        select: "name image",
+      });
     if (!question) throw new NotFoundError("Question");
     return { success: true, data: JSON.parse(JSON.stringify(question)) };
   } catch (error) {
