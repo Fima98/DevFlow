@@ -88,7 +88,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
       <Preview content={content} />
 
       <section className="my-8">
-        <AnswerForm />
+        <AnswerForm questionId={question._id} />
       </section>
     </>
   );

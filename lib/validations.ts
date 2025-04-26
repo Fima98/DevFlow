@@ -105,6 +105,10 @@ export const AnswerSchema = z.object({
     .min(50, { message: "Answer must be at least 50 characters long." }),
 });
 
+export const AnswerServerSchema = AnswerSchema.extend({
+  questionId: z.string().min(1, { message: "Question ID is required." }),
+});
+
 // USER SCHEMAS
 export const UserSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
