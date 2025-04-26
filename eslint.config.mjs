@@ -26,6 +26,7 @@ export default [
       "import/no-anonymous-default-export": ["off"],
       "@typescript-eslint/no-require-imports": ["off"],
       "tailwindcss/no-custom-classname": ["off"],
+      "react-hooks/exhaustive-deps": "off",
       "import/order": [
         "error",
         {
