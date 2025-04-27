@@ -1,10 +1,9 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MDXEditorMethods } from "@mdxeditor/editor";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import React, { useRef, useTransition } from "react";
+import React, { useEffect, useRef, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -37,7 +36,6 @@ interface Params {
 
 const QuestionForm = ({ question, isEdit = false }: Params) => {
   const router = useRouter();
-  const editorRef = useRef<MDXEditorMethods>(null);
   const [isPending, startTransition] = useTransition();
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
@@ -85,6 +83,26 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
       });
     }
   };
+
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleEditorChange = (value: string) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      form.setValue("content", value);
+    }, 300);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleCreateQuestion = async (
     data: z.infer<typeof AskQuestionSchema>
@@ -184,9 +202,9 @@ const QuestionForm = ({ question, isEdit = false }: Params) => {
               </FormLabel>
               <FormControl>
                 <Editor
-                  value={field.value}
-                  editorRef={editorRef}
-                  fieldChange={field.onChange}
+                  markdown={field.value}
+                  // editorRef={editorRef}
+                  onChange={handleEditorChange}
                 />
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">

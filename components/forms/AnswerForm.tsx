@@ -1,9 +1,8 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MDXEditorMethods } from "@mdxeditor/editor";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import dynamic from "next/dynamic";
-import { useRef, useTransition } from "react";
+import { useEffect, useRef, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -25,7 +24,25 @@ const Editor = dynamic(() => import("@/components/editor"), {
 
 const AnswerForm = ({ questionId }: { questionId: string }) => {
   const [isAnswering, setIsAnsweringTransition] = useTransition();
-  const editorRef = useRef<MDXEditorMethods>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleEditorChange = (value: string) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(() => {
+      form.setValue("content", value);
+    }, 300);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleSubmit = async (values: z.infer<typeof AnswerSchema>) => {
     setIsAnsweringTransition(async () => {
@@ -70,12 +87,11 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
             <FormItem className="flex w-full flex-col gap-3">
               <FormControl className="mt-3.5">
                 <Editor
-                  value={field.value}
-                  editorRef={editorRef}
-                  fieldChange={field.onChange}
+                  markdown={field.value}
+                  // editorRef={editorRef}
+                  onChange={handleEditorChange}
                 />
               </FormControl>
-              <FormMessage />
               <FormMessage />
             </FormItem>
           )}

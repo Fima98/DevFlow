@@ -15,72 +15,55 @@ import {
   quotePlugin,
   markdownShortcutPlugin,
   ListsToggle,
-  linkDialogPlugin,
-  CreateLink,
-  InsertImage,
   InsertTable,
   tablePlugin,
-  imagePlugin,
   codeMirrorPlugin,
   ConditionalContents,
   ChangeCodeMirrorLanguage,
   Separator,
   InsertThematicBreak,
   diffSourcePlugin,
-  MDXEditorMethods,
   thematicBreakPlugin,
+  MDXEditorProps,
 } from "@mdxeditor/editor";
 import { basicDark } from "cm6-theme-basic-dark";
 import { useTheme } from "next-themes";
-import { Ref } from "react";
 
 import "@mdxeditor/editor/style.css";
 import "./editor.css";
 
-interface Props {
-  value: string;
-  editorRef: Ref<MDXEditorMethods> | null;
-  fieldChange: (value: string) => void;
-}
-
-const Editor = ({ value, editorRef, fieldChange }: Props) => {
+const Editor = ({ markdown, onChange }: MDXEditorProps) => {
   const { resolvedTheme } = useTheme();
-
   const themeExtension = resolvedTheme === "dark" ? [basicDark] : [];
 
   return (
     <MDXEditor
       key={resolvedTheme}
-      markdown={value}
-      ref={editorRef}
-      onChange={fieldChange}
+      markdown={markdown}
+      onChange={onChange}
       className="background-light800_dark200 light-border-2 markdown-editor dark-editor light-editor grid w-full overflow-hidden rounded-lg border"
       plugins={[
         headingsPlugin(),
         listsPlugin(),
         linkPlugin(),
-        linkDialogPlugin(),
         quotePlugin(),
         markdownShortcutPlugin(),
         tablePlugin(),
-        imagePlugin(),
         thematicBreakPlugin(),
         codeBlockPlugin({ defaultCodeBlockLanguage: "" }),
         codeMirrorPlugin({
           codeBlockLanguages: {
-            css: "css",
-            txt: "txt",
-            sql: "sql",
-            html: "html",
-            sass: "sass",
-            scss: "scss",
-            bash: "bash",
-            json: "json",
+            "": "unspecified",
             js: "javascript",
             ts: "typescript",
-            "": "unspecified",
-            tsx: "TSX",
-            jsx: "JSX",
+            py: "python",
+            java: "java",
+            c: "c",
+            rust: "rust",
+            html: "html",
+            css: "css",
+            sql: "sql",
+            bash: "bash",
           },
           autoLoadLanguageSupport: true,
           codeMirrorExtensions: themeExtension,
@@ -99,23 +82,15 @@ const Editor = ({ value, editorRef, fieldChange }: Props) => {
                     <>
                       <UndoRedo />
                       <Separator />
-
                       <BlockTypeSelect />
                       <BoldItalicUnderlineToggles />
                       <CodeToggle />
                       <Separator />
-
                       <ListsToggle options={["bullet", "number"]} />
                       <Separator />
-
-                      <CreateLink />
-                      <InsertImage />
-                      <Separator />
-
                       <InsertTable />
                       <InsertThematicBreak />
                       <Separator />
-
                       <InsertCodeBlock />
                     </>
                   ),
