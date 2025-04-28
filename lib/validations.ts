@@ -1,5 +1,14 @@
 import { z } from "zod";
 
+// SEARCH SCHEMAS
+export const PaginatedSearchSchema = z.object({
+  page: z.number().int().positive().default(1),
+  pageSize: z.number().int().positive().default(10),
+  query: z.string().optional(),
+  filter: z.string().optional(),
+  sort: z.string().optional(),
+});
+
 // AUTHENTICATION SCHEMAS
 export const SignInSchema = z.object({
   email: z
@@ -105,7 +114,12 @@ export const AnswerSchema = z.object({
     .min(50, { message: "Answer must be at least 50 characters long." }),
 });
 
+// ANSWER SCHEMAS
 export const AnswerServerSchema = AnswerSchema.extend({
+  questionId: z.string().min(1, { message: "Question ID is required." }),
+});
+
+export const GetAnswerSchema = PaginatedSearchSchema.extend({
   questionId: z.string().min(1, { message: "Question ID is required." }),
 });
 
@@ -149,15 +163,6 @@ export const AccountSchema = z.object({
   providerAccountId: z
     .string()
     .min(1, { message: "Provider Account ID is required." }),
-});
-
-// SEARCH SCHEMAS
-export const PaginatedSearchSchema = z.object({
-  page: z.number().int().positive().default(1),
-  pageSize: z.number().int().positive().default(10),
-  query: z.string().optional(),
-  filter: z.string().optional(),
-  sort: z.string().optional(),
 });
 
 export const GetTagQuestionsSchema = PaginatedSearchSchema.extend({

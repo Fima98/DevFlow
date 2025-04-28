@@ -9,6 +9,7 @@ import AnswerForm from "@/components/forms/AnswerForm";
 import Metric from "@/components/Metric";
 import UserAvatar from "@/components/UserAvatar";
 import ROUTES from "@/constants/routes";
+import { getAnswers } from "@/lib/actions/answer.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 
@@ -21,6 +22,16 @@ const QuestionDetails = async ({ params }: RouteParams) => {
   });
 
   if (!success || !question) return redirect("/404");
+
+  const {
+    success: areAnswersLoaded,
+    data: answersResult,
+    error: answersError,
+  } = await getAnswers({
+    questionId: id,
+    page: 1,
+    pageSize: 5,
+  });
 
   const { title, author, createdAt, answers, views, tags, content } = question;
 
