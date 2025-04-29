@@ -223,13 +223,7 @@ export async function getQuestions(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const {
-    page = 1,
-    pageSize = 10,
-    query,
-    filter,
-    sort,
-  } = validationResult.params!;
+  const { page = 1, pageSize = 10, query, filter } = validationResult.params!;
   const skip = (Number(page) - 1) * pageSize;
   const limit = Number(pageSize);
 
@@ -248,7 +242,7 @@ export async function getQuestions(
 
   let sortCriteria = {};
 
-  switch (sort) {
+  switch (filter) {
     case "newest":
       sortCriteria = { createdAt: -1 };
       break;

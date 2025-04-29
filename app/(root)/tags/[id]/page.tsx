@@ -2,7 +2,6 @@ import React from "react";
 
 import QuestionCard from "@/components/cards/QuestionCard";
 import DataRenderer from "@/components/DataRenderer";
-import HomeFilter from "@/components/filters/HomeFilter";
 import LocalSearch from "@/components/search/LocalSearch";
 import ROUTES from "@/constants/routes";
 import { EMPTY_QUESTION } from "@/constants/states";
@@ -21,7 +20,7 @@ const TagQuestionsPage = async ({ params, searchParams }: RouteParams) => {
   const { tag, questions } = data || {};
   return (
     <>
-      <section className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
+      <section className="flex w-full justify-between gap-4 sm:flex-row sm:items-center">
         {tag?.name && (
           <h1 className="h1-bold text-dark100_light900">
             Questions related to{" "}
@@ -37,7 +36,6 @@ const TagQuestionsPage = async ({ params, searchParams }: RouteParams) => {
           otherClasses="flex-1"
         />
       </div>
-      <HomeFilter />
       <DataRenderer<Question>
         success={success}
         error={error}
