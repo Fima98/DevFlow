@@ -10,7 +10,7 @@ import Answer, { IAnswerDoc } from "@/database/answer.model";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { NotFoundError } from "../http-errors";
-import { AnswerServerSchema, GetAnswerSchema } from "../validations";
+import { AnswerServerSchema, GetAnswersSchema } from "../validations";
 
 export async function CreateAnswer(
   params: CreateAnswerParams
@@ -60,7 +60,7 @@ export async function CreateAnswer(
   }
 }
 
-export async function getAnswers(params: GetAnswerParams): Promise<
+export async function getAnswers(params: GetAnswersParams): Promise<
   ActionResponse<{
     answers: Answer[];
     isNext: boolean;
@@ -69,25 +69,21 @@ export async function getAnswers(params: GetAnswerParams): Promise<
 > {
   const validationResult = await action({
     params,
-    schema: GetAnswerSchema,
+    schema: GetAnswersSchema,
   });
 
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const {
-    questionId,
-    page = 1,
-    pageSize = 10,
-    sort,
-  } = validationResult.params!;
-  const skip = (Number(page) - 1) * Number(pageSize);
-  const limit = Number(pageSize);
+  const { questionId, page = 1, pageSize = 10, filter } = params;
+
+  const skip = (Number(page) - 1) * pageSize;
+  const limit = pageSize;
 
   let sortCriteria = {};
 
-  switch (sort) {
+  switch (filter) {
     case "latest":
       sortCriteria = { createdAt: -1 };
       break;
@@ -103,9 +99,8 @@ export async function getAnswers(params: GetAnswerParams): Promise<
   }
 
   try {
-    const totalAnswers = await Answer.countDocuments({
-      question: questionId,
-    });
+    const totalAnswers = await Answer.countDocuments({ question: questionId });
+
     const answers = await Answer.find({ question: questionId })
       .populate("author", "_id name image")
       .sort(sortCriteria)

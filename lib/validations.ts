@@ -6,7 +6,6 @@ export const PaginatedSearchSchema = z.object({
   pageSize: z.number().int().positive().default(10),
   query: z.string().optional(),
   filter: z.string().optional(),
-  sort: z.string().optional(),
 });
 
 // AUTHENTICATION SCHEMAS
@@ -119,7 +118,7 @@ export const AnswerServerSchema = AnswerSchema.extend({
   questionId: z.string().min(1, { message: "Question ID is required." }),
 });
 
-export const GetAnswerSchema = PaginatedSearchSchema.extend({
+export const GetAnswersSchema = PaginatedSearchSchema.extend({
   questionId: z.string().min(1, { message: "Question ID is required." }),
 });
 

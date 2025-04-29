@@ -36,7 +36,7 @@ const UserAvatar = ({
           <Image
             src={imageUrl}
             alt={name}
-            className=" object-cover"
+            className="object-cover"
             width={36}
             height={36}
             quality={100}

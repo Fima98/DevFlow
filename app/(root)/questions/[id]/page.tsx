@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { after } from "next/server";
 import React from "react";
 
+import AllAnswers from "@/components/answers/AllAnswers";
 import TagCard from "@/components/cards/TagCard";
 import Preview from "@/components/editor/Preview";
 import AnswerForm from "@/components/forms/AnswerForm";
@@ -31,6 +32,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
     questionId: id,
     page: 1,
     pageSize: 5,
+    filter: "latest",
   });
 
   const { title, author, createdAt, answers, views, tags, content } = question;
@@ -97,6 +99,15 @@ const QuestionDetails = async ({ params }: RouteParams) => {
         ))}
       </div>
       <Preview content={content} />
+
+      <section className="my-5">
+        <AllAnswers
+          data={answersResult?.answers}
+          success={areAnswersLoaded}
+          error={answersError}
+          totalAnswers={answersResult?.totalAnswers || 0}
+        />
+      </section>
 
       <section className="my-8">
         <AnswerForm questionId={question._id} />
