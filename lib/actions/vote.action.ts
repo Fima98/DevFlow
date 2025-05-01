@@ -1,13 +1,19 @@
 "use server";
 
 import mongoose, { ClientSession } from "mongoose";
+import { revalidatePath } from "next/cache";
 
+import ROUTES from "@/constants/routes";
 import { Question, Vote, Answer } from "@/database";
 
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { UnauthorizedError } from "../http-errors";
-import { CreateVoteSchema, UpdateVoteCountSchema } from "../validations";
+import {
+  CreateVoteSchema,
+  HasVotedSchema,
+  UpdateVoteCountSchema,
+} from "../validations";
 
 export async function updateVoteCount(
   params: UpdateVoteCountParams,
@@ -110,6 +116,9 @@ export async function createVote(
     }
     await session.commitTransaction();
     session.endSession();
+
+    revalidatePath(ROUTES.QUESTION(targetId));
+
     return { success: true };
   } catch (error) {
     return handleError(error) as ErrorResponse;
@@ -123,7 +132,7 @@ export async function hasVoted(
 ): Promise<ActionResponse<HasVotedResponse>> {
   const validationResult = await action({
     params,
-    schema: CreateVoteSchema,
+    schema: HasVotedSchema,
     authorize: true,
   });
 
@@ -140,12 +149,16 @@ export async function hasVoted(
       actionId: targetId,
       actionType: targetType,
     });
-    if (!vote) {
+
+    if (!vote)
       return {
-        success: true,
-        data: { hasUpVoted: false, hasDownVoted: false },
+        success: false,
+        data: {
+          hasUpVoted: false,
+          hasDownVoted: false,
+        },
       };
-    }
+
     return {
       success: true,
       data: {
