@@ -29,6 +29,8 @@ const AllAnswers = ({ data, success, error, totalAnswers }: Props) => {
               content={answer.content}
               author={answer.author}
               createdAt={answer.createdAt}
+              upvotes={answer.upvotes}
+              downvotes={answer.downvotes}
             />
           ))
         }
