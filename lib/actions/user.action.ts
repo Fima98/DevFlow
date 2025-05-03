@@ -24,12 +24,12 @@ export async function getUsers(
   const skip = (Number(page) - 1) * pageSize;
   const limit = Number(pageSize);
 
-  const filterQuery: FilterQuery<typeof User> = [];
+  const filterQuery: FilterQuery<typeof User> = {};
 
   if (query) {
     filterQuery.$or = [
       { name: { $regex: query, $options: "i" } },
-      { email: { $regex: query, $options: "i" } },
+      { username: { $regex: query, $options: "i" } },
     ];
   }
 
@@ -43,9 +43,6 @@ export async function getUsers(
       break;
     case "popular":
       sortCriteria = { reputation: -1 };
-      break;
-    case "oldest":
-      sortCriteria = { createdAt: 1 };
       break;
     default:
       sortCriteria = { createdAt: -1 };
