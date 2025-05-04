@@ -71,3 +71,9 @@ interface PaginatedSearchParams {
   filter?: string;
   sort?: string;
 }
+
+interface Collection {
+  _id: string;
+  author: string | Author;
+  question: Question;
+}
