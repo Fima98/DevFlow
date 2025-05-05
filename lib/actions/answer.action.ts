@@ -94,7 +94,7 @@ export async function getAnswers(params: GetAnswersParams): Promise<
       sortCriteria = { upvotes: -1 };
       break;
     default:
-      sortCriteria = { createdAt: -1 };
+      sortCriteria = { upvotes: -1 };
       break;
   }
 
