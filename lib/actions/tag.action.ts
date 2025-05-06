@@ -54,7 +54,7 @@ export async function getTags(
       .sort(sortCriteria)
       .skip(skip)
       .limit(limit);
-    const isNext = totalTags > skip * tags.length;
+    const isNext = totalTags > skip + tags.length;
     return {
       success: true,
       data: {
@@ -105,7 +105,7 @@ export async function getTagQuestions(
       .lean()
       .skip(skip)
       .limit(limit);
-    const isNext = totalQuestions > skip * questions.length;
+    const isNext = totalQuestions > skip + questions.length;
     return {
       success: true,
       data: {
