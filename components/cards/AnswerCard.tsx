@@ -33,6 +33,7 @@ const AnswerCard = ({
             name={author.name}
             imageUrl={author.image}
             className="size-7 rounded-full object-cover"
+            imageSizes="28px"
           />
 
           <Link

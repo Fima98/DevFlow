@@ -13,6 +13,7 @@ const UserCard = ({ _id, name, image, username }: User) => (
         imageUrl={image}
         className="size-[100px] rounded-full object-cover"
         fallbackClassName="text-3xl tracking-widest"
+        imageSizes="100px"
       />
 
       <Link href={ROUTES.PROFILE(_id)}>

@@ -55,6 +55,7 @@ const QuestionCard = ({
                 name={author.name}
                 className="size-[20px]"
                 fallbackClassName="text-[10px]"
+                imageSizes="20px"
               />
               <Link href={ROUTES.PROFILE(author._id)}>
                 <p className="body-medium text-dark400_light700 flex-center gap-1">
