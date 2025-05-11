@@ -95,6 +95,7 @@ const Profile = async ({ params }: RouteParams) => {
         totalQuestions={totalQuestions}
         totalAnswers={totalAnswers}
         badges={{ gold: 0, silver: 0, bronze: 0 }}
+        reputationPoints={reputation || 0}
       />
 
       <section className="mt-10 flex gap-10">
@@ -108,11 +109,12 @@ const Profile = async ({ params }: RouteParams) => {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="top-posts">
-            <div className="flex w-full flex-col gap-6"> List of top posts</div>
+            <div className="mt-5 flex w-full flex-col gap-6">
+              List of top posts
+            </div>
           </TabsContent>
           <TabsContent value="top-answers">
-            <div className="flex w-full flex-col gap-6">
-              {" "}
+            <div className="mt-5 flex w-full flex-col gap-6">
               List of top answers
             </div>
           </TabsContent>
