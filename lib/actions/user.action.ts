@@ -10,6 +10,7 @@ import { NotFoundError } from "../http-errors";
 import dbConnect from "../mongoose";
 import {
   GetUserQuestionsSchema,
+  GetUsersAnswersSchema,
   GetUserSchema,
   PaginatedSearchSchema,
 } from "../validations";
@@ -146,6 +147,51 @@ export async function getUserQuestions(params: GetUserQuestionsParams): Promise<
         questions: JSON.parse(JSON.stringify(questions)),
         isNext,
         totalQuestions,
+      },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function getUserAnswers(params: GetUserAnswersParams): Promise<
+  ActionResponse<{
+    answers: Answer[];
+    isNext: boolean;
+  }>
+> {
+  const validationResult = await action({
+    params,
+    schema: GetUsersAnswersSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { page = 1, pageSize = 10, userId } = params;
+
+  const skip = (Number(page) - 1) * pageSize;
+  const limit = pageSize;
+
+  try {
+    const [totalAnswers, answers] = await Promise.all([
+      Answer.countDocuments({ author: userId }),
+      Answer.find({ author: userId })
+        .populate("author", "name image")
+        .lean()
+        .skip(skip)
+        .limit(limit)
+        .sort({ upvotes: -1 }),
+    ]);
+
+    const isNext = totalAnswers > skip + answers.length;
+
+    return {
+      success: true,
+      data: {
+        answers: JSON.parse(JSON.stringify(answers)),
+        isNext,
       },
     };
   } catch (error) {
