@@ -71,7 +71,6 @@ interface PaginatedSearchParams {
   pageSize?: number;
   query?: string;
   filter?: string;
-  sort?: string;
 }
 
 interface Collection {
