@@ -6,6 +6,7 @@
     "source.addMissingImports": "explicit"
   },
   "prettier.tabWidth": 2,
+  "prettier.printWidth": 100,
   "prettier.useTabs": false,
   "prettier.semi": true,
   "prettier.singleQuote": false,

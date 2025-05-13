@@ -6,6 +6,7 @@ import React from "react";
 import { auth } from "@/auth";
 import AnswerCard from "@/components/cards/AnswerCard";
 import QuestionCard from "@/components/cards/QuestionCard";
+import TagCard from "@/components/cards/TagCard";
 import DataRenderer from "@/components/DataRenderer";
 import Pagination from "@/components/Pagination";
 import { Button } from "@/components/ui/button";
@@ -13,11 +14,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ProfileLink from "@/components/user/ProfileLink";
 import Stats from "@/components/user/Stats";
 import UserAvatar from "@/components/UserAvatar";
-import { EMPTY_ANSWERS, EMPTY_QUESTION } from "@/constants/states";
+import { EMPTY_ANSWERS, EMPTY_QUESTION, EMPTY_TAGS } from "@/constants/states";
 import {
   getUser,
   getUserAnswers,
   getUserQuestions,
+  getUserTopTags,
 } from "@/lib/actions/user.action";
 
 const Profile = async ({ params, searchParams }: RouteParams) => {
@@ -28,7 +30,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
 
   const loggedInUser = await auth();
 
-  const [userRes, userQuestionsRes, userAnswersRes] = await Promise.all([
+  const [userRes, userQuestionsRes, userAnswersRes, userTopTagsRes] = await Promise.all([
     getUser({ userId: id }),
     getUserQuestions({
       userId: id,
@@ -40,9 +42,18 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
       page: Number(page) || 1,
       pageSize: Number(pageSize) || 5,
     }),
+    getUserTopTags({ userId: id }),
   ]);
 
   const { success, data, error } = userRes;
+
+  if (!success)
+    return (
+      <div>
+        <div className="h1-bold text-dark100_light900">{error?.message}</div>
+      </div>
+    );
+
   const {
     success: userQuestionsSuccess,
     data: userQuestions,
@@ -53,28 +64,17 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
     data: userAnswers,
     error: userAnswersError,
   } = userAnswersRes;
-
-  if (!success)
-    return (
-      <div>
-        <div className="h1-bold text-dark100_light900">{error?.message}</div>
-      </div>
-    );
+  const {
+    success: userTopTagsSuccess,
+    data: userTopTags,
+    error: userTopTagsError,
+  } = userTopTagsRes;
 
   const { user, totalQuestions, totalAnswers } = data!;
-  const {
-    _id,
-    name,
-    username,
-    bio,
-    image,
-    location,
-    portfolio,
-    reputation,
-    createdAt,
-  } = user;
+  const { _id, name, username, bio, image, location, portfolio, reputation, createdAt } = user;
   const { questions, isNext: hasMoreQuestions } = userQuestions!;
   const { answers, isNext: hasMoreAnswers } = userAnswers!;
+  const { tags } = userTopTags!;
 
   return (
     <>
@@ -90,31 +90,19 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
           />
           <div className="mt-3">
             <h2 className="h2-bold text-dark100_light900">{name}</h2>
-            <p className="paragraph-regular text-dark200_light800">
-              @{username}
-            </p>
+            <p className="paragraph-regular text-dark200_light800">@{username}</p>
             <div className="mt-3 flex flex-wrap items-center justify-start gap-5">
               {portfolio && (
-                <ProfileLink
-                  imgUrl="/icons/link.svg"
-                  href={portfolio}
-                  title="Portfolio"
-                />
+                <ProfileLink imgUrl="/icons/link.svg" href={portfolio} title="Portfolio" />
               )}
-              {location && (
-                <ProfileLink imgUrl="/icons/location.svg" title={location} />
-              )}
+              {location && <ProfileLink imgUrl="/icons/location.svg" title={location} />}
 
               <ProfileLink
                 imgUrl="/icons/calendar.svg"
                 title={dayjs(createdAt).format("MMMM YYYY")}
               />
             </div>
-            {bio && (
-              <p className="paragraph-regular text-dark400_light800 mt-8">
-                {bio}
-              </p>
-            )}
+            {bio && <p className="paragraph-regular text-dark400_light800 mt-8">{bio}</p>}
           </div>
         </div>
 
@@ -146,55 +134,69 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="top-posts">
-            <div className="mt-5 flex w-full flex-col gap-6">
-              <DataRenderer<Question>
-                success={userQuestionsSuccess}
-                error={userQuestionsError}
-                data={questions}
-                empty={EMPTY_QUESTION}
-                render={(questions) => (
-                  <div className="flex w-full flex-col gap-6">
-                    {questions.map((question) => (
-                      <QuestionCard key={question._id} question={question} />
-                    ))}
-                  </div>
-                )}
-              />
-              <Pagination page={page} isNext={hasMoreQuestions || false} />s
-            </div>
+            <DataRenderer<Question>
+              success={userQuestionsSuccess}
+              error={userQuestionsError}
+              data={questions}
+              empty={EMPTY_QUESTION}
+              render={(questions) => (
+                <div className="mt-5 flex w-full flex-col gap-6">
+                  {questions.map((question) => (
+                    <QuestionCard key={question._id} question={question} />
+                  ))}
+                </div>
+              )}
+            />
+            <Pagination page={page} isNext={hasMoreQuestions || false} />
           </TabsContent>
           <TabsContent value="top-answers">
-            <div className="mt-5 flex w-full flex-col gap-6">
-              <DataRenderer
-                success={userAnswersSuccess}
-                error={userAnswersError}
-                data={answers}
-                empty={EMPTY_ANSWERS}
-                render={(answers) => (
-                  <div className="flex w-full flex-col gap-10">
-                    {answers.map((answer) => (
-                      <AnswerCard
-                        key={answer._id}
-                        {...answer}
-                        content={answer.content.slice(0, 270)}
-                        containerClasses="card-wrapper rounded-[10px] px-7 py-9 sm:px-11"
-                        showReadMore
-                      />
-                    ))}
-                  </div>
-                )}
-              />
+            <DataRenderer
+              success={userAnswersSuccess}
+              error={userAnswersError}
+              data={answers}
+              empty={EMPTY_ANSWERS}
+              render={(answers) => (
+                <div className="mt-5 flex w-full flex-col gap-10">
+                  {answers.map((answer) => (
+                    <AnswerCard
+                      key={answer._id}
+                      {...answer}
+                      content={answer.content.slice(0, 270)}
+                      containerClasses="card-wrapper rounded-[10px] px-7 py-9 sm:px-11"
+                      showReadMore
+                    />
+                  ))}
+                </div>
+              )}
+            />
 
-              <Pagination page={page} isNext={hasMoreAnswers || false} />
-            </div>
+            <Pagination page={page} isNext={hasMoreAnswers || false} />
           </TabsContent>
         </Tabs>
 
         <div className="flex w-full min-w-[250px] flex-1 flex-col max-lg:hidden">
           <h3 className="h3-bold text-dark200_light900">Top Tags</h3>
-          <div className="mt-7 flex flex-col gap-4">
-            <p>List of top tags</p>
-          </div>
+
+          <DataRenderer
+            data={tags}
+            empty={EMPTY_TAGS}
+            success={userTopTagsSuccess}
+            error={userTopTagsError}
+            render={(userTags) => (
+              <div className="mt-7 flex w-full flex-col gap-4">
+                {userTags.map(({ _id, name, count: questions }) => (
+                  <TagCard
+                    key={_id}
+                    _id={_id}
+                    name={name}
+                    questions={questions}
+                    showCount
+                    compact
+                  />
+                ))}
+              </div>
+            )}
+          />
         </div>
       </section>
     </>
