@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import ROUTES from "@/constants/routes";
 import { toast } from "@/hooks/use-toast";
+import { deleteAnswer } from "@/lib/actions/answer.action";
 import { deleteQuestion } from "@/lib/actions/question.action";
 
 interface Props {
@@ -33,7 +34,8 @@ const EditDeleteButtons = ({ type, itemId }: Props) => {
         description: "Your question has been deleted successfully.",
       });
     } else if (type === "answer") {
-      // TODO: implement delete answer (deleteAnswer)
+      await deleteAnswer({ answerId: itemId });
+
       toast({
         title: "Answer deleted",
         description: "Your answer has been deleted successfully.",
