@@ -6,12 +6,14 @@ import { hasVoted } from "@/lib/actions/vote.action";
 import { cn, getTimeStamp } from "@/lib/utils";
 
 import Preview from "../editor/Preview";
+import EditDeleteButtons from "../user/EditDeleteButtons";
 import UserAvatar from "../UserAvatar";
 import Votes from "../votes/Votes";
 
 interface Props extends Answer {
   containerClasses?: string;
   showReadMore?: boolean;
+  showActionBtns?: boolean;
 }
 
 const AnswerCard = ({
@@ -24,6 +26,7 @@ const AnswerCard = ({
   question,
   containerClasses,
   showReadMore = false,
+  showActionBtns = false,
 }: Props) => {
   const hasVotedPromise = hasVoted({
     targetId: _id,
@@ -46,20 +49,17 @@ const AnswerCard = ({
 
           <Link
             href={ROUTES.PROFILE(author._id)}
-            className="flex flex-col max-sm:ml-1 sm:flex-row sm:items-center"
+            className="flex flex-col max-md:ml-1 md:flex-row md:items-center"
           >
-            <p className="body-semibold text-dark300_light700">
-              {author.name ?? "Anonymous"}
-            </p>
+            <p className="body-semibold text-dark300_light700">{author.name ?? "Anonymous"}</p>
 
-            <p className="small-regular text-light400_light500 sm:ml-1">
-              <span className="hidden sm:inline">•</span> answered{" "}
-              {getTimeStamp(createdAt)}
+            <p className="small-regular text-light400_light500 md:ml-1">
+              <span className="hidden md:inline">•</span> answered {getTimeStamp(createdAt)}
             </p>
           </Link>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-4">
           <Suspense fallback={<div>Loading...</div>}>
             <Votes
               upvotes={upvotes}
@@ -69,6 +69,11 @@ const AnswerCard = ({
               hasVotedPromise={hasVotedPromise}
             />
           </Suspense>
+          {showActionBtns && (
+            <div className="background-light800 flex-center rounded-full">
+              <EditDeleteButtons type="answer" itemId={_id} />
+            </div>
+          )}
         </div>
       </div>
 

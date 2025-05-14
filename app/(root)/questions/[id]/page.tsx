@@ -59,14 +59,13 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
             <UserAvatar
               id={author._id}
               name={author.name}
+              imageUrl={author.image}
               className="size-[22px]"
               fallbackClassName="text-[10px]"
               imageSizes="22px"
             />
             <Link href={ROUTES.PROFILE(author._id)}>
-              <p className="paragraph-semibold text-dark300_light700">
-                {author.name}
-              </p>
+              <p className="paragraph-semibold text-dark300_light700">{author.name}</p>
             </Link>
           </div>
 
@@ -88,9 +87,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
             </Suspense>
           </div>
         </div>
-        <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full">
-          {title}
-        </h2>
+        <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full">{title}</h2>
       </div>
 
       <div className="mb-8 mt-5 flex flex-wrap gap-4">
@@ -119,12 +116,7 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
 
       <div className="my-8 flex flex-wrap gap-2">
         {tags.map((tag: Tag) => (
-          <TagCard
-            key={tag._id}
-            _id={tag._id as string}
-            name={tag.name}
-            compact
-          />
+          <TagCard key={tag._id} _id={tag._id as string} name={tag.name} compact />
         ))}
       </div>
       <Preview content={content} />
