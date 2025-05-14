@@ -23,21 +23,12 @@ export const SignInSchema = z.object({
 
 export const SignInWithOAuthSchema = z.object({
   provider: z.enum(["google", "github"]),
-  providerAccountId: z
-    .string()
-    .min(1, { message: "Provider Account ID is required." }),
+  providerAccountId: z.string().min(1, { message: "Provider Account ID is required." }),
   user: z.object({
     name: z.string().min(1, { message: "Name is required." }),
-    username: z
-      .string()
-      .min(3, { message: "Username must be at least 3 characters long." }),
-    email: z
-      .string()
-      .email({ message: "Please provide a valid email address." }),
-    image: z
-      .string()
-      .url({ message: "Please provide a valid URL." })
-      .optional(),
+    username: z.string().min(3, { message: "Username must be at least 3 characters long." }),
+    email: z.string().email({ message: "Please provide a valid email address." }),
+    image: z.string().url({ message: "Please provide a valid URL." }).optional(),
   }),
 });
 
@@ -108,9 +99,7 @@ export const GetQuestionSchema = z.object({
 });
 
 export const AnswerSchema = z.object({
-  content: z
-    .string()
-    .min(50, { message: "Answer must be at least 50 characters long." }),
+  content: z.string().min(50, { message: "Answer must be at least 50 characters long." }),
 });
 
 // ANSWER SCHEMAS
@@ -125,17 +114,12 @@ export const GetAnswersSchema = PaginatedSearchSchema.extend({
 // USER SCHEMAS
 export const UserSchema = z.object({
   name: z.string().min(1, { message: "Name is required." }),
-  username: z
-    .string()
-    .min(3, { message: "Username must be at least 3 characters long." }),
+  username: z.string().min(3, { message: "Username must be at least 3 characters long." }),
   email: z.string().email({ message: "Please provide a valid email address." }),
   bio: z.string().optional(),
   image: z.string().url({ message: "Please provide a valid URL." }).optional(),
   location: z.string().optional(),
-  portfolio: z
-    .string()
-    .url({ message: "Please provide a valid URL." })
-    .optional(),
+  portfolio: z.string().url({ message: "Please provide a valid URL." }).optional(),
   reputation: z.number().optional(),
 });
 
@@ -159,9 +143,7 @@ export const AccountSchema = z.object({
     })
     .optional(),
   provider: z.string().min(1, { message: "Provider is required." }),
-  providerAccountId: z
-    .string()
-    .min(1, { message: "Provider Account ID is required." }),
+  providerAccountId: z.string().min(1, { message: "Provider Account ID is required." }),
 });
 
 export const GetTagQuestionsSchema = PaginatedSearchSchema.extend({
@@ -213,4 +195,8 @@ export const GetUserAnswersSchema = PaginatedSearchSchema.omit({
 
 export const GetUserTagsSchema = z.object({
   userId: z.string().min(1, { message: "User ID is required." }),
+});
+
+export const DeleteQuestionSchema = z.object({
+  questionId: z.string().min(1, { message: "Question ID is required." }),
 });
