@@ -35,3 +35,31 @@ export const sidebarLinks = [
     label: "Ask a question",
   },
 ];
+
+export const badgeCriteria = {
+  QUESTION_COUNT: {
+    bronze: 10,
+    silver: 50,
+    gold: 100,
+  },
+  ANSWER_COUNT: {
+    bronze: 10,
+    silver: 50,
+    gold: 100,
+  },
+  QUESTION_UPVOTES: {
+    bronze: 10,
+    silver: 50,
+    gold: 100,
+  },
+  ANSWER_UPVOTES: {
+    bronze: 10,
+    silver: 50,
+    gold: 100,
+  },
+  TOTAL_VIEWS: {
+    bronze: 1000,
+    silver: 10000,
+    gold: 100000,
+  },
+};

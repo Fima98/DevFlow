@@ -80,7 +80,7 @@ interface Collection {
   question: Question;
 }
 
-interface BadgeCounts {
+interface Badges {
   bronze: number;
   silver: number;
   gold: number;

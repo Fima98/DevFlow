@@ -19,6 +19,7 @@ import {
   getUser,
   getUserAnswers,
   getUserQuestions,
+  getUserStats,
   getUserTopTags,
 } from "@/lib/actions/user.action";
 
@@ -30,20 +31,22 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
 
   const loggedInUser = await auth();
 
-  const [userRes, userQuestionsRes, userAnswersRes, userTopTagsRes] = await Promise.all([
-    getUser({ userId: id }),
-    getUserQuestions({
-      userId: id,
-      page: Number(page) || 1,
-      pageSize: Number(pageSize) || 10,
-    }),
-    getUserAnswers({
-      userId: id,
-      page: Number(page) || 1,
-      pageSize: Number(pageSize) || 5,
-    }),
-    getUserTopTags({ userId: id }),
-  ]);
+  const [userRes, userQuestionsRes, userAnswersRes, userTopTagsRes, userStatsRes] =
+    await Promise.all([
+      getUser({ userId: id }),
+      getUserQuestions({
+        userId: id,
+        page: Number(page) || 1,
+        pageSize: Number(pageSize) || 10,
+      }),
+      getUserAnswers({
+        userId: id,
+        page: Number(page) || 1,
+        pageSize: Number(pageSize) || 5,
+      }),
+      getUserTopTags({ userId: id }),
+      getUserStats({ userId: id }),
+    ]);
 
   const { success, data, error } = userRes;
 
@@ -69,9 +72,11 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
     data: userTopTags,
     error: userTopTagsError,
   } = userTopTagsRes;
+  const { data: userStats } = userStatsRes;
 
-  const { user, totalQuestions, totalAnswers } = data!;
+  const { user } = data!;
   const { _id, name, username, bio, image, location, portfolio, reputation, createdAt } = user;
+  const { totalQuestions, totalAnswers, badges } = userStats!;
   const { questions, isNext: hasMoreQuestions } = userQuestions!;
   const { answers, isNext: hasMoreAnswers } = userAnswers!;
   const { tags } = userTopTags!;
@@ -119,7 +124,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
       <Stats
         totalQuestions={totalQuestions}
         totalAnswers={totalAnswers}
-        badges={{ gold: 0, silver: 0, bronze: 0 }}
+        badges={badges || { bronze: 0, silver: 0, gold: 0 }}
         reputationPoints={reputation || 0}
       />
 

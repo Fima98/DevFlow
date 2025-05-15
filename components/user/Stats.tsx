@@ -24,16 +24,11 @@ const StatsCard = ({ imgUrl, value, title }: StatsCardProps) => {
 interface Props {
   totalQuestions: number;
   totalAnswers: number;
-  badges: BadgeCounts;
+  badges: Badges;
   reputationPoints: number;
 }
 
-const Stats = ({
-  totalQuestions,
-  totalAnswers,
-  badges,
-  reputationPoints,
-}: Props) => {
+const Stats = ({ totalQuestions, totalAnswers, badges, reputationPoints }: Props) => {
   return (
     <div className="mt-7">
       <h3 className="h3-semibold text-dark200_light900">
@@ -51,27 +46,13 @@ const Stats = ({
             <p className="body-medium text-dark400_light700">Questions</p>
           </div>
           <div>
-            <p className="paragraph-semibold text-dark200_light900">
-              {formatNumber(totalAnswers)}
-            </p>
+            <p className="paragraph-semibold text-dark200_light900">{formatNumber(totalAnswers)}</p>
             <p className="body-medium text-dark400_light700">Answers</p>
           </div>
         </div>
-        <StatsCard
-          imgUrl="/icons/gold-medal.svg"
-          value={badges.gold}
-          title="Gold badges"
-        />
-        <StatsCard
-          imgUrl="/icons/silver-medal.svg"
-          value={badges.silver}
-          title="Silver badges"
-        />
-        <StatsCard
-          imgUrl="/icons/bronze-medal.svg"
-          value={badges.bronze}
-          title="Bronze badges"
-        />
+        <StatsCard imgUrl="/icons/gold-medal.svg" value={badges.gold} title="Gold badges" />
+        <StatsCard imgUrl="/icons/silver-medal.svg" value={badges.silver} title="Silver badges" />
+        <StatsCard imgUrl="/icons/bronze-medal.svg" value={badges.bronze} title="Bronze badges" />
       </div>
     </div>
   );

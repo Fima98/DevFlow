@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+import { badgeCriteria } from "@/constants";
 import { techMap, techDescriptionMap } from "@/constants/techMap";
 
 export function cn(...inputs: ClassValue[]) {
@@ -54,3 +55,36 @@ export const formatNumber = (number: number) => {
   }
   return number.toString();
 };
+
+export function assignBadges(params: {
+  criteria: {
+    type: keyof typeof badgeCriteria;
+    count: number;
+  }[];
+}): Badges {
+  const badgeCounts: Badges = {
+    gold: 0,
+    silver: 0,
+    bronze: 0,
+  };
+
+  const { criteria } = params;
+
+  criteria.forEach((criterion) => {
+    const { type, count } = criterion;
+    const badgeLevels = badgeCriteria[type];
+
+    Object.keys(badgeLevels).forEach((levelKey) => {
+      const level = levelKey as keyof Badges;
+      const threshold = badgeLevels[level as keyof typeof badgeLevels];
+
+      if (typeof threshold === "number" && threshold > 0) {
+        const badgesEarnedForThisCriterionAndLevel = Math.floor(count / threshold);
+
+        badgeCounts[level] += badgesEarnedForThisCriterionAndLevel;
+      }
+    });
+  });
+
+  return badgeCounts;
+}
