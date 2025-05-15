@@ -26,12 +26,52 @@ export async function createInteraction(
     actionTarget,
     authorId, // person who owns the content (question/answer)
   } = validationResult.params!;
-  const userId = validationResult.session?.user?.id;
+  const userId = validationResult.session!.user!.id!;
 
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
+    const existing = await Interaction.findOne({
+      user: userId,
+      actionId,
+      actionTarget,
+      actionType: { $in: ["upvote", "downvote"] },
+    }).session(session);
+
+    if (existing) {
+      // Якщо голосування вже є, і воно інше — оновлюємо його
+      if (existing.actionType !== actionType) {
+        // Відкотити попередній вплив на репутацію
+        await updateReputation({
+          interaction: existing,
+          session,
+          performerId: userId,
+          authorId,
+          revert: true, // Важливо!
+        });
+
+        // Оновлюємо тип голосу
+        existing.actionType = actionType;
+        await existing.save({ session });
+
+        // Додаємо новий вплив
+        await updateReputation({
+          interaction: existing,
+          session,
+          performerId: userId,
+          authorId,
+        });
+
+        await session.commitTransaction();
+        return { success: true, data: existing.toObject() };
+      } else {
+        // Якщо тип такий самий, нічого не робимо
+        await session.abortTransaction();
+        return { success: true, data: existing.toObject() };
+      }
+    }
+
     const [interaction] = await Interaction.create(
       [
         {
@@ -64,7 +104,7 @@ export async function createInteraction(
 }
 
 export async function updateReputation(params: UpdateReputationParams) {
-  const { interaction, session, performerId, authorId } = params;
+  const { interaction, session, performerId, authorId, revert = false } = params;
   const { actionType, actionTarget } = interaction;
 
   let performerPoints = 0;
@@ -76,7 +116,6 @@ export async function updateReputation(params: UpdateReputationParams) {
       authorPoints = 10;
       break;
     case "downvote":
-      performerPoints = -1;
       authorPoints = -2;
       break;
     case "post":
@@ -85,6 +124,11 @@ export async function updateReputation(params: UpdateReputationParams) {
     case "delete":
       authorPoints = actionTarget === "question" ? -5 : -10;
       break;
+  }
+
+  if (revert) {
+    performerPoints *= -1;
+    authorPoints *= -1;
   }
 
   if (performerId === authorId) {
@@ -100,7 +144,12 @@ export async function updateReputation(params: UpdateReputationParams) {
           update: { $inc: { reputation: performerPoints } },
         },
       },
-      { updateOne: { filter: { _id: authorId }, update: { $inc: { reputation: authorPoints } } } },
+      {
+        updateOne: {
+          filter: { _id: authorId },
+          update: { $inc: { reputation: authorPoints } },
+        },
+      },
     ],
     { session }
   );

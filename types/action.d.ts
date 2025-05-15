@@ -104,4 +104,5 @@ interface UpdateReputationParams {
   session: mongoose.ClientSession;
   performerId: string;
   authorId: string;
+  revert?: boolean;
 }
