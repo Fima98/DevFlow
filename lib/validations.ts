@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { InteractionActionEnums } from "@/database/interaction.model";
+
 // SEARCH SCHEMAS
 export const PaginatedSearchSchema = z.object({
   page: z.number().int().positive().default(1),
@@ -203,4 +205,11 @@ export const DeleteQuestionSchema = z.object({
 
 export const DeleteAnswerSchema = z.object({
   answerId: z.string().min(1, { message: "Answer ID is required." }),
+});
+
+export const CreateInteractionSchema = z.object({
+  actionType: z.enum(InteractionActionEnums),
+  actionTarget: z.enum(["question", "answer"]),
+  actionId: z.string().min(1),
+  authorId: z.string().min(1),
 });
