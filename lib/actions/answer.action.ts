@@ -2,6 +2,7 @@
 
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 
 import ROUTES from "@/constants/routes";
 import { Question, Vote } from "@/database";
@@ -11,6 +12,7 @@ import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { ForbiddenError, NotFoundError } from "../http-errors";
 import { AnswerServerSchema, DeleteAnswerSchema, GetAnswersSchema } from "../validations";
+import { createInteraction } from "./interaction.action";
 
 export async function CreateAnswer(
   params: CreateAnswerParams
@@ -44,6 +46,16 @@ export async function CreateAnswer(
     }
     question.answers += 1;
     await question.save({ session });
+
+    after(async () => {
+      await createInteraction({
+        actionType: "post",
+        actionId: newAnswer._id.toString(),
+        actionTarget: "answer",
+        authorId: userId as string,
+      });
+    });
+
     await session.commitTransaction();
 
     revalidatePath(ROUTES.QUESTION(questionId));

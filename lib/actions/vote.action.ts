@@ -2,6 +2,7 @@
 
 import mongoose, { ClientSession } from "mongoose";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 
 import ROUTES from "@/constants/routes";
 import { Question, Vote, Answer } from "@/database";
@@ -9,11 +10,8 @@ import { Question, Vote, Answer } from "@/database";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { UnauthorizedError } from "../http-errors";
-import {
-  CreateVoteSchema,
-  HasVotedSchema,
-  UpdateVoteCountSchema,
-} from "../validations";
+import { CreateVoteSchema, HasVotedSchema, UpdateVoteCountSchema } from "../validations";
+import { createInteraction } from "./interaction.action";
 
 export async function updateVoteCount(
   params: UpdateVoteCountParams,
@@ -50,9 +48,7 @@ export async function updateVoteCount(
   }
 }
 
-export async function createVote(
-  params: CreateVoteParams
-): Promise<ActionResponse> {
+export async function createVote(params: CreateVoteParams): Promise<ActionResponse> {
   const validationResult = await action({
     params,
     schema: CreateVoteSchema,
@@ -72,6 +68,13 @@ export async function createVote(
   session.startTransaction();
 
   try {
+    const Model = targetType === "question" ? Question : Answer;
+
+    const contentDoc = await Model.findById(targetId).session(session);
+    if (!contentDoc) throw new Error("Content not found");
+
+    const contentAuthorId = contentDoc.author.toString();
+
     const existingVote = await Vote.findOne({
       author: userId,
       actionId: targetId,
@@ -83,19 +86,12 @@ export async function createVote(
         await Vote.deleteOne({ _id: existingVote._id }, { session });
         await updateVoteCount({ targetId, targetType, voteType, change: -1 });
       } else {
-        await Vote.findByIdAndUpdate(
-          existingVote._id,
-          { voteType },
-          { new: true, session }
-        );
+        await Vote.findByIdAndUpdate(existingVote._id, { voteType }, { new: true, session });
         await updateVoteCount(
           { targetId, targetType, voteType: existingVote.voteType, change: -1 },
           session
         );
-        await updateVoteCount(
-          { targetId, targetType, voteType, change: 1 },
-          session
-        );
+        await updateVoteCount({ targetId, targetType, voteType, change: 1 }, session);
       }
     } else {
       await Vote.create(
@@ -109,11 +105,18 @@ export async function createVote(
         ],
         { session }
       );
-      await updateVoteCount(
-        { targetId, targetType, voteType, change: 1 },
-        session
-      );
+      await updateVoteCount({ targetId, targetType, voteType, change: 1 }, session);
     }
+
+    after(async () => {
+      await createInteraction({
+        actionType: voteType,
+        actionId: targetId,
+        actionTarget: targetType,
+        authorId: contentAuthorId,
+      });
+    });
+
     await session.commitTransaction();
     session.endSession();
 
@@ -127,9 +130,7 @@ export async function createVote(
   }
 }
 
-export async function hasVoted(
-  params: HasVotedParams
-): Promise<ActionResponse<HasVotedResponse>> {
+export async function hasVoted(params: HasVotedParams): Promise<ActionResponse<HasVotedResponse>> {
   const validationResult = await action({
     params,
     schema: HasVotedSchema,
