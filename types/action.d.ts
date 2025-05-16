@@ -106,3 +106,10 @@ interface UpdateReputationParams {
   authorId: string;
   revert?: boolean;
 }
+
+interface RecommendationParams {
+  userId: string;
+  query?: string;
+  skip: number;
+  limit: number;
+}
