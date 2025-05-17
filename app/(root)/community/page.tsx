@@ -29,10 +29,7 @@ const Community = async ({ searchParams }: RouteParams) => {
           placeholder="Search by username..."
           otherClasses="flex-1"
         />
-        <CommonFilter
-          filters={UserFilters}
-          otherClasses="min-h-[56px] sm:min-w-[170px]"
-        />
+        <CommonFilter filters={UserFilters} otherClasses="min-h-[56px] sm:min-w-[170px]" />
       </div>
       <DataRenderer
         success={success}
