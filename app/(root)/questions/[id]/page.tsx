@@ -21,23 +21,23 @@ import { formatNumber, getTimeStamp } from "@/lib/utils";
 const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
   const { page, pageSize, filter } = await searchParams;
-  const { success, data: question } = await getQuestion({ questionId: id });
 
-  after(async () => {
-    await incrementViews({ questionId: id });
-  });
+  const [questionsRes, answersRes] = await Promise.all([
+    getQuestion({ questionId: id }),
+    getAnswers({
+      questionId: id,
+      page: Number(page) || 1,
+      pageSize: Number(pageSize) || 10,
+      filter,
+    }),
+  ]);
+  const { success, data: question } = questionsRes;
+  const { success: areAnswersLoaded, data: answersResult, error: answersError } = answersRes;
 
   if (!success || !question) return redirect("/404");
 
-  const {
-    success: areAnswersLoaded,
-    data: answersResult,
-    error: answersError,
-  } = await getAnswers({
-    questionId: id,
-    page: Number(page) || 1,
-    pageSize: Number(pageSize) || 10,
-    filter,
+  after(async () => {
+    await incrementViews({ questionId: id });
   });
 
   const hasVotedPromise = hasVoted({
