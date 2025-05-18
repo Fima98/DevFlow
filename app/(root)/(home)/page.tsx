@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import Link from "next/link";
 
 import QuestionCard from "@/components/cards/QuestionCard";
@@ -15,6 +16,12 @@ import { getQuestions } from "@/lib/actions/question.action";
 interface SearchParams {
   searchParams: Promise<{ [key: string]: string }>;
 }
+
+export const metadata: Metadata = {
+  title: "DevFlow | Home",
+  description:
+    "Discover different programming questions and answers with recommendations from the community.",
+};
 
 const Home = async ({ searchParams }: SearchParams) => {
   const { page, pageSize, query = "", filter = "" } = await searchParams;
