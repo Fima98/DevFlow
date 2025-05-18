@@ -3,6 +3,7 @@
 import mongoose, { FilterQuery, Types } from "mongoose";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
+import { cache } from "react";
 
 import { auth } from "@/auth";
 import ROUTES from "@/constants/routes";
@@ -189,7 +190,9 @@ export async function editQuestion(params: EditQuestionParams): Promise<ActionRe
   }
 }
 
-export async function getQuestion(params: GetQuestionParams): Promise<ActionResponse<Question>> {
+export const getQuestion = cache(async function getQuestion(
+  params: GetQuestionParams
+): Promise<ActionResponse<Question>> {
   const validationResult = await action({
     params,
     schema: GetQuestionSchema,
@@ -210,7 +213,7 @@ export async function getQuestion(params: GetQuestionParams): Promise<ActionResp
   } catch (error) {
     return handleError(error) as ErrorResponse;
   }
-}
+});
 
 export async function getQuestions(
   params: PaginatedSearchParams
