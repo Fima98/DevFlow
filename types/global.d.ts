@@ -85,3 +85,10 @@ interface Badges {
   silver: number;
   gold: number;
 }
+
+interface GlobalSearchedItem {
+  id: string;
+  questionId?: string;
+  type: "question" | "answer" | "user" | "tag";
+  title: string;
+}

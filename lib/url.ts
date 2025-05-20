@@ -3,7 +3,7 @@ import qs from "query-string";
 interface UrlQueryParams {
   params: string;
   key: string;
-  value: string;
+  value: string | null;
 }
 
 interface RemoveUrlQueryParams {
@@ -22,10 +22,7 @@ export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
   });
 };
 
-export const removeKeysFromUrlQuery = ({
-  params,
-  keysToRemove,
-}: RemoveUrlQueryParams) => {
+export const removeKeysFromUrlQuery = ({ params, keysToRemove }: RemoveUrlQueryParams) => {
   const queryString = qs.parse(params);
 
   keysToRemove.forEach((key) => {
