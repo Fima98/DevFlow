@@ -31,55 +31,69 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
 
   const loggedInUser = await auth();
 
-  const [userRes, userQuestionsRes, userAnswersRes, userTopTagsRes, userStatsRes] =
-    await Promise.all([
-      getUser({ userId: id }),
-      getUserQuestions({
-        userId: id,
-        page: Number(page) || 1,
-        pageSize: Number(pageSize) || 10,
-      }),
-      getUserAnswers({
-        userId: id,
-        page: Number(page) || 1,
-        pageSize: Number(pageSize) || 5,
-      }),
-      getUserTopTags({ userId: id }),
-      getUserStats({ userId: id }),
-    ]);
+  const pageNum = Number(page) || 1;
+  const questionsPageSize = Number(pageSize) || 10;
+  const answersPageSize = Number(pageSize) || 5;
 
-  const { success, data, error } = userRes;
+  const [
+    userResponse,
+    userQuestionsResponse,
+    userAnswersResponse,
+    userTopTagsResponse,
+    userStatsResponse,
+  ] = await Promise.all([
+    getUser({ userId: id }),
+    getUserQuestions({
+      userId: id,
+      page: pageNum,
+      pageSize: questionsPageSize,
+    }),
+    getUserAnswers({
+      userId: id,
+      page: pageNum,
+      pageSize: answersPageSize,
+    }),
+    getUserTopTags({ userId: id }),
+    getUserStats({ userId: id }),
+  ]);
 
-  if (!success)
+  if (!userResponse.success) {
     return (
       <div>
-        <div className="h1-bold text-dark100_light900">{error?.message}</div>
+        <div className="h1-bold text-dark100_light900">{userResponse.error?.message}</div>
       </div>
     );
+  }
+  const { user } = userResponse.data!;
+
+  const { _id, name, username, bio, image, location, portfolio, reputation, createdAt } = user;
+
+  const {
+    totalQuestions = 0,
+    totalAnswers = 0,
+    badges = { bronze: 0, silver: 0, gold: 0 },
+  } = userStatsResponse.data || {};
 
   const {
     success: userQuestionsSuccess,
-    data: userQuestions,
+    data: userQuestionsData,
     error: userQuestionsError,
-  } = userQuestionsRes;
+  } = userQuestionsResponse;
+  const { questions = [], isNext: hasMoreQuestions = false } = userQuestionsData || {};
+
   const {
     success: userAnswersSuccess,
-    data: userAnswers,
+    data: userAnswersData,
     error: userAnswersError,
-  } = userAnswersRes;
+  } = userAnswersResponse;
+  const { answers = [], isNext: hasMoreAnswers = false } = userAnswersData || {};
+
   const {
     success: userTopTagsSuccess,
-    data: userTopTags,
+    data: userTopTagsData,
     error: userTopTagsError,
-  } = userTopTagsRes;
-  const { data: userStats } = userStatsRes;
-
-  const { user } = data!;
-  const { _id, name, username, bio, image, location, portfolio, reputation, createdAt } = user;
-  const { totalQuestions, totalAnswers, badges } = userStats!;
-  const { questions, isNext: hasMoreQuestions } = userQuestions!;
-  const { answers, isNext: hasMoreAnswers } = userAnswers!;
-  const { tags } = userTopTags!;
+  } = userTopTagsResponse;
+  const { tags = [] } = userTopTagsData || {};
 
   return (
     <>
@@ -112,7 +126,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
         </div>
 
         <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
-          {loggedInUser?.user?.id == id && (
+          {loggedInUser?.user?.id === id && (
             <Link href={`/profile/edit`}>
               <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-12 min-w-20 px-4 py-3">
                 Edit
@@ -124,7 +138,7 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
       <Stats
         totalQuestions={totalQuestions}
         totalAnswers={totalAnswers}
-        badges={badges || { bronze: 0, silver: 0, gold: 0 }}
+        badges={badges}
         reputationPoints={reputation || 0}
       />
 
@@ -144,49 +158,47 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
               error={userQuestionsError}
               data={questions}
               empty={EMPTY_QUESTION}
-              render={(questions) => (
+              render={(questionsToRender) => (
                 <div className="mt-5 flex w-full flex-col gap-6">
-                  {questions.map((question) => (
+                  {questionsToRender.map((question) => (
                     <QuestionCard
                       key={question._id}
                       question={question}
-                      showActionBtns={loggedInUser?.user?.id == question.author._id}
+                      showActionBtns={loggedInUser?.user?.id === question.author._id}
                     />
                   ))}
                 </div>
               )}
             />
-            <Pagination page={page} isNext={hasMoreQuestions || false} />
+            <Pagination page={page} isNext={hasMoreQuestions} />{" "}
           </TabsContent>
           <TabsContent value="top-answers">
-            <DataRenderer
+            <DataRenderer<Answer>
               success={userAnswersSuccess}
               error={userAnswersError}
               data={answers}
               empty={EMPTY_ANSWERS}
-              render={(answers) => (
+              render={(answersToRender) => (
                 <div className="mt-5 flex w-full flex-col gap-10">
-                  {answers.map((answer) => (
+                  {answersToRender.map((answer) => (
                     <AnswerCard
                       key={answer._id}
                       {...answer}
                       content={answer.content.slice(0, 270)}
                       containerClasses="card-wrapper rounded-[10px] px-7 py-9 sm:px-11"
                       showReadMore
-                      showActionBtns={loggedInUser?.user?.id == answer.author._id}
+                      showActionBtns={loggedInUser?.user?.id === answer.author._id}
                     />
                   ))}
                 </div>
               )}
             />
-
-            <Pagination page={page} isNext={hasMoreAnswers || false} />
+            <Pagination page={page} isNext={hasMoreAnswers} />
           </TabsContent>
         </Tabs>
 
         <div className="flex w-full min-w-[250px] flex-1 flex-col max-2xl:hidden">
           <h3 className="h3-bold text-dark200_light900">Top Tags</h3>
-
           <DataRenderer
             data={tags}
             empty={EMPTY_TAGS}
@@ -194,12 +206,12 @@ const Profile = async ({ params, searchParams }: RouteParams) => {
             error={userTopTagsError}
             render={(userTags) => (
               <div className="mt-7 flex w-full flex-col gap-4">
-                {userTags.map(({ _id, name, count: questions }) => (
+                {userTags.map(({ _id: tagId, name: tagName, count: tagQuestions }) => (
                   <TagCard
-                    key={_id}
-                    _id={_id}
-                    name={name}
-                    questions={questions}
+                    key={tagId}
+                    _id={tagId}
+                    name={tagName}
+                    questions={tagQuestions}
                     showCount
                     compact
                   />
