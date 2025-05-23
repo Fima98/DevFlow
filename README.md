@@ -1,12 +1,24 @@
 # DevFlow
 
-DevFlow – це сучасна платформа для розробників, створена за зразком StackOverflow. Тут ти можеш задавати питання, надавати відповіді та обговорювати різноманітні технології, а також переглядати та розміщувати вакансії у розділі Jobs.
+DevFlow is a modern platform for developers, inspired by StackOverflow. Here, you can ask questions, provide answers, and discuss various technologies, as well as browse and post job listings in the Jobs section.
 
-## Основні можливості
+## Key Features
 
-- **Питання та відповіді:**  
-  Задавай питання, відповідай на запити інших користувачів, отримуй корисні поради та ділись власним досвідом.
-- **Система тегів:**  
-  Організуй питання за категоріями та технологіями, щоб спільнота могла швидко знаходити актуальні теми.
-- **Розділ Jobs:**  
-  Компанії та рекрутери можуть розміщувати вакансії, а розробники — шукати нові можливості для кар’єрного зростання.
+### Questions & Answers
+
+Ask questions, answer queries from other users, receive helpful advice, and share your own experience.
+
+### Tagging System
+
+Organize questions by categories and technologies so the community can easily find relevant topics.
+
+### Bookmarks
+
+Save interesting questions to your bookmarks for quick access later.
+
+### Recommendations
+
+Get personalized question recommendations based on your followed tags and interests.
+
+> *This project was built as part of a course by JSMastery and is inspired by StackOverflow.*
+
